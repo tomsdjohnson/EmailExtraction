@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,15 +15,20 @@ public class Main {
         byte[] bytes = Files.readAllBytes(path);
         String fileContents =  new String(bytes);
 
-        Pattern p = Pattern.compile("\\w@softwire\\.com\\s");
+        Pattern p = Pattern.compile("\\S*@(\\w+(\\.|\\-)\\w*((\\.)\\w*)*)\\s");
         Matcher m = p.matcher(fileContents);
 
-        int count= 0;
+        HashMap<String, Integer> hm = new HashMap<>();
 
-        while(m.find() == true) {
-            count = count + 1;
+        while(m.find()) {
+            String domain = m.group(1);
+
+            if (hm.containsKey(domain)) {
+                hm.put(domain, hm.get(domain) + 1);
+            }else{
+                hm.put(domain, 1);
+            }
         }
-
-        System.out.println(count);
+        System.out.println(hm);
     }
 }
